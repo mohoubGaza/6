@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إطار الصور السحري</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+        
+        :root {
+            --primary: #FF9AA2;
+            --secondary: #FFB7B2;
+            --accent: #FFDAC1;
+            --light: #E2F0CB;
+            --bright: #B5EAD7;
+            --text: #5E4A4A;
+        }
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--bright);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            background-image: radial-gradient(circle, var(--light) 10%, transparent 10%), 
+                              radial-gradient(circle, var(--light) 10%, transparent 10%);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            animation: bgMove 20s linear infinite;
+        }
+        
+        @keyframes bgMove {
+            0% { background-position: 0 0, 15px 15px; }
+            100% { background-position: 30px 30px, 45px 45px; }
+        }
+        
+        h1 {
+            color: #FF6B6B;
+            text-shadow: 3px 3px 0px rgba(0,0,0,0.1);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border: 5px dashed var(--primary);
+        }
+        
+        .frame-selector {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .frame-option {
+            width: 100px;
+            height: 100px;
+            border-radius: 15px;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: white;
+            padding: 5px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .frame-option:hover {
+            transform: scale(1.1);
+            border-color: var(--primary);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        
+        .frame-option.selected {
+            border-color: var(--primary);
+            background-color: var(--accent);
+            transform: scale(1.1);
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1.1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1.1); }
+        }
+        
+        .frame-option img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .upload-section {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: var(--light);
+            border-radius: 15px;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .file-label {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+        }
+        
+        .file-label:hover {
+            background-color: #FF6B6B;
+            transform: translateY(-3px);
+            box-shadow: 0 7px 0 rgba(0,0,0,0.1);
+        }
+        
+        .file-label:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+        }
+        
+        .preview {
+            margin: 20px auto;
+            width: 300px;
+            height: 300px;
+            border: 5px solid var(--secondary);
+            border-radius: 20px;
+            background-color: white;
+            overflow: hidden;
+            position: relative;
+            display: none;
+        }
+        
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .buttons {
+            margin: 20px 0;
+        }
+        
+        button {
+            padding: 12px 24px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Tajawal', sans-serif;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+        }
+        
+        .merge-btn {
+            background-color: var(--bright);
+            color: var(--text);
+        }
+        
+        .download-btn {
+            background-color: var(--secondary);
+            color: white;
+            display: none;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 0 rgba(0,0,0,0.1);
+        }
+        
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            transform: none;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+            cursor: not-allowed;
+        }
+        
+        .preview-image {
+            max-width: 100%;
+            max-height: 100%;
+            display: none;
+        }
+        
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .frame-option {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .preview {
+                width: 250px;
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✨ إطار الصور السحري ✨</h1>
+        <p>اختر إطارًا ممتعًا وأضف صورتك لإنشاء صورة سحرية!</p>
+        
+        <h2>الخطوة 1: اختر الإطار</h2>
+        <div class="frame-selector">
+            <!-- سيتم استبدال هذه الصور بصور PNG الخاصة بك -->
+            <div class="frame-option" data-frame="frame1.png">
+                <img src="0.png" alt="إطار 1">
+            </div>
+            <div class="frame-option" data-frame="frame2.png">
+                <img src="1.png" alt="إطار 2">
+            </div>
+            <div class="frame-option" data-frame="frame3.png">
+                <img src="frames/frame3.png" alt="إطار 3">
+            </div>
+            <div class="frame-option" data-frame="frame4.png">
+                <img src="frames/frame4.png" alt="إطار 4">
+            </div>
+            <div class="frame-option" data-frame="frame5.png">
+                <img src="frames/frame5.png" alt="إطار 5">
+            </div>
+            <div class="frame-option" data-frame="frame6.png">
+                <img src="frames/frame6.png" alt="إطار 6">
+            </div>
+        </div>
+        
+        <h2>الخطوة 2: أضف صورتك</h2>
+        <div class="upload-section">
+            <input type="file" id="photo-upload" class="file-input" accept="image/*">
+            <label for="photo-upload" class="file-label">📷 اختر صورة</label>
+            <p id="file-name" style="margin-top: 10px;"></p>
+        </div>
+        
+        <div class="buttons">
+            <button class="merge-btn" id="merge-btn" disabled>✨ دمج الصور ✨</button>
+            <button class="download-btn" id="download-btn">⬇️ تحميل الصورة ⬇️</button>
+        </div>
+        
+        <div class="preview" id="preview">
+            <canvas id="canvas"></canvas>
+            <img id="preview-image" class="preview-image" alt="صورتك المدمجة">
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // العناصر
+            const frameOptions = document.querySelectorAll('.frame-option');
+            const photoUpload = document.getElementById('photo-upload');
+            const mergeBtn = document.getElementById('merge-btn');
+            const downloadBtn = document.getElementById('download-btn');
+            const preview = document.getElementById('preview');
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            const fileNameDisplay = document.getElementById('file-name');
+            const previewImage = document.getElementById('preview-image');
+            
+            // الحالة
+            let selectedFrame = null;
+            let uploadedImage = null;
+            let frameImage = null;
+            
+            // اختيار الإطار
+            frameOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    frameOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedFrame = this.getAttribute('data-frame');
+                    
+                    // تحميل صورة الإطار
+                    frameImage = new Image();
+                    frameImage.src = this.querySelector('img').src;
+                    frameImage.onload = function() {
+                        checkReadyToMerge();
+                    };
+                    
+                    checkReadyToMerge();
+                });
+            });
+            
+            // رفع الصورة
+            photoUpload.addEventListener('change', function(e) {
+                if (e.target.files && e.target.files[0]) {
+                    const file = e.target.files[0];
+                    fileNameDisplay.textContent = `تم اختيار: ${file.name}`;
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        uploadedImage = new Image();
+                        uploadedImage.onload = function() {
+                            checkReadyToMerge();
+                        };
+                        uploadedImage.src = event.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // دمج الصور
+            mergeBtn.addEventListener('click', function() {
+                if (!selectedFrame || !uploadedImage || !frameImage) return;
+                
+                // تحديد حجم الكنفاس
+                const size = Math.max(uploadedImage.width, uploadedImage.height, frameImage.width, frameImage.height, 300);
+                canvas.width = size;
+                canvas.height = size;
+                
+                // مسح الكنفاس
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // رسم الصورة المرفوعة (في الخلفية)
+                const scale = Math.min(
+                    canvas.width / uploadedImage.width,
+                    canvas.height / uploadedImage.height
+                );
+                const width = uploadedImage.width * scale;
+                const height = uploadedImage.height * scale;
+                const x = (canvas.width - width) / 2;
+                const y = (canvas.height - height) / 2;
+                
+                ctx.drawImage(uploadedImage, x, y, width, height);
+                
+                // رسم الإطار (في المقدمة)
+                const frameScale = Math.min(
+                    canvas.width / frameImage.width,
+                    canvas.height / frameImage.height
+                );
+                const frameWidth = frameImage.width * frameScale;
+                const frameHeight = frameImage.height * frameScale;
+                const frameX = (canvas.width - frameWidth) / 2;
+                const frameY = (canvas.height - frameHeight) / 2;
+                
+                ctx.drawImage(frameImage, frameX, frameY, frameWidth, frameHeight);
+                
+                // عرض المعاينة
+                preview.style.display = 'block';
+                downloadBtn.style.display = 'inline-block';
+                
+                // إضافة تأثير حركي
+                animateMerge();
+            });
+            
+            // تحميل الصورة
+            downloadBtn.addEventListener('click', function() {
+                const link = document.createElement('a');
+                link.download = 'صورة-سحرية.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                // إضافة رسالة تأكيد
+                fileNameDisplay.textContent = 'تم تنزيل صورتك بنجاح! 🎉';
+                setTimeout(() => {
+                    fileNameDisplay.textContent = '';
+                }, 3000);
+            });
+            
+            // التحقق من الجاهزية للدمج
+            function checkReadyToMerge() {
+                if (selectedFrame && uploadedImage) {
+                    mergeBtn.disabled = false;
+                } else {
+                    mergeBtn.disabled = true;
+                }
+            }
+            
+            // تأثير حركي للدمج
+            function animateMerge() {
+                preview.style.transform = 'scale(0.5)';
+                preview.style.opacity = '0';
+                
+                let scale = 0.5;
+                let opacity = 0;
+                let rotation = 5;
+                
+                const animate = () => {
+                    scale += (1 - scale) * 0.1;
+                    opacity += (1 - opacity) * 0.1;
+                    rotation *= 0.9;
+                    
+                    preview.style.transform = `scale(${scale}) rotate(${rotation}deg)`;
+                    preview.style.opacity = opacity;
+                    
+                    if (scale < 0.99 || opacity < 0.99 || Math.abs(rotation) > 0.1) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        preview.style.transform = 'scale(1) rotate(0deg)';
+                        preview.style.opacity = '1';
+                    }
+                };
+                
+                requestAnimationFrame(animate);
+            }
+        });
+    </script>
+</body>
+</html>
