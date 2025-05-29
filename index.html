@@ -323,63 +323,68 @@
                 }
             });
             
-            // دمج الصور
-            mergeBtn.addEventListener('click', function() {
-                if (!selectedFrame || !uploadedImage || !frameImage) return;
-                
-                // تحديد حجم الكنفاس
-                const size = Math.max(uploadedImage.width, uploadedImage.height, frameImage.width, frameImage.height, 300);
-                canvas.width = size;
-                canvas.height = size;
-                
-                // مسح الكنفاس
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                // رسم الصورة المرفوعة (في الخلفية)
-                const scale = Math.min(
-                    canvas.width / uploadedImage.width,
-                    canvas.height / uploadedImage.height
-                );
-                const width = uploadedImage.width * scale;
-                const height = uploadedImage.height * scale;
-                const x = (canvas.width - width) / 2;
-                const y = (canvas.height - height) / 2;
-                
-                ctx.drawImage(uploadedImage, x, y, width, height);
-                
-                // رسم الإطار (في المقدمة)
-                const frameScale = Math.min(
-                    canvas.width / frameImage.width,
-                    canvas.height / frameImage.height
-                );
-                const frameWidth = frameImage.width * frameScale;
-                const frameHeight = frameImage.height * frameScale;
-                const frameX = (canvas.width - frameWidth) / 2;
-                const frameY = (canvas.height - frameHeight) / 2;
-                
-                ctx.drawImage(frameImage, frameX, frameY, frameWidth, frameHeight);
-                
-                // عرض المعاينة
-                preview.style.display = 'block';
-                downloadBtn.style.display = 'inline-block';
-                
-                // إضافة تأثير حركي
-                animateMerge();
-            });
+           // دمج الصور
+        mergeBtn.addEventListener('click', function() {
+            if (!selectedFrame || !uploadedImage || !frameImage) return;
             
-            // تحميل الصورة
-            downloadBtn.addEventListener('click', function() {
-                const link = document.createElement('a');
-                link.download = 'صورة-سحرية.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                
-                // إضافة رسالة تأكيد
-                fileNameDisplay.textContent = 'تم تنزيل صورتك بنجاح! 🎉';
-                setTimeout(() => {
-                    fileNameDisplay.textContent = '';
-                }, 3000);
-            });
+            // تحديد حجم الكنفاس
+            const size = Math.max(uploadedImage.width, uploadedImage.height, frameImage.width, frameImage.height, 300);
+            canvas.width = size;
+            canvas.height = size;
+            
+            // مسح الكنفاس
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // رسم الصورة المرفوعة (في الخلفية)
+            const scale = Math.min(
+                canvas.width / uploadedImage.width,
+                canvas.height / uploadedImage.height
+            );
+            const width = uploadedImage.width * scale;
+            const height = uploadedImage.height * scale;
+            const x = (canvas.width - width) / 2;
+            const y = (canvas.height - height) / 2;
+            
+            ctx.drawImage(uploadedImage, x, y, width, height);
+            
+            // رسم الإطار (في المقدمة)
+            const frameScale = Math.min(
+                canvas.width / frameImage.width,
+                canvas.height / frameImage.height
+            );
+            const frameWidth = frameImage.width * frameScale;
+            const frameHeight = frameImage.height * frameScale;
+            const frameX = (canvas.width - frameWidth) / 2;
+            const frameY = (canvas.height - frameHeight) / 2;
+            
+            ctx.drawImage(frameImage, frameX, frameY, frameWidth, frameHeight);
+            
+            // عرض المعاينة
+            preview.style.display = 'block';
+            downloadBtn.style.display = 'inline-block';
+            
+            // تحويل الكانفاس إلى صورة وعرضها
+            previewImage.src = canvas.toDataURL('image/png');
+            previewImage.style.display = 'block';
+            canvas.style.display = 'none';
+            
+            // إضافة تأثير حركي
+            animateMerge();
+        });
+        
+        // تحميل الصورة
+        downloadBtn.addEventListener('click', function() {
+            const link = document.createElement('a');
+            link.download = 'صورة-سحرية.png';
+            link.href = canvas.toDataURL('image/png'); // أو استخدام previewImage.src
+            link.click();
+            
+            // إضافة رسالة تأكيد
+            fileNameDisplay.textContent = 'تم تنزيل صورتك بنجاح! 🎉';
+            setTimeout(() => {
+                fileNameDisplay.textContent = '';
+            }, 3000);
+        });
             
             // التحقق من الجاهزية للدمج
             function checkReadyToMerge() {
